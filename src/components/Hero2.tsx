@@ -25,9 +25,10 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
           <div className="flex lg:flex-1">
             <Link href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Creekside</span>
+              {/* Logo goes here */}
               <Image
                 alt="Creekside HOA Logo"
-                src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+                src="/path/to/logo.png"
                 width={32}
                 height={32}
                 className="h-8 w-auto"
@@ -60,9 +61,10 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
             <div className="flex items-center justify-between">
               <Link href="#" className="-m-1.5 p-1.5">
                 <span className="sr-only">HOA</span>
+                {/* Logo goes here */}
                 <Image
                   alt="HOA Logo"
-                  src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+                  src="/path/to/hoa-logo.png"
                   width={32}
                   height={32}
                   className="h-8 w-auto"

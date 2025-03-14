@@ -17,6 +17,7 @@ import {
 import Underline from "@tiptap/extension-underline";
 import { useQuery } from "@tanstack/react-query";
 import Skeleton from "@/components/skeleton";
+import { unstable_noStore } from "next/cache";
 
 export interface HeroData {
   heading1: string;
@@ -46,6 +47,42 @@ export interface ContentData {
 export interface HomePageContent {
   hero: HeroData;
   content: ContentData;
+}
+
+interface validateJwtResponse {
+  isValid: boolean;
+}
+
+interface RefreshTokenResponse {
+  token: string;
+}
+
+async function refreshTokenFn(token: string | null): Promise<string | null> {
+  if (!token) return null;
+  const refreshToken = token;
+
+  try {
+    const response = await fetch(
+      "https://api.creeksideinverness.org/api/refresh",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refreshToken }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to refresh token");
+    }
+
+    const data: RefreshTokenResponse = await response.json();
+    return data.token;
+  } catch (error) {
+    console.error("Token refresh failed:", error);
+    return null;
+  }
 }
 
 const RichTextToolbar: React.FC<{ editor: Editor | null }> = ({ editor }) => {
@@ -253,13 +290,83 @@ export default function AdminPage() {
   const [successMsg, setSuccessMsg] = React.useState<string>("");
 
   React.useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const validateToken = async () => {
+      let token = sessionStorage.getItem("token");
+      const refreshToken = sessionStorage.getItem("refreshToken");
 
-    if (!token) {
-      window.location.replace("/login");
-      return;
-    }
-    setIsCheckingAuth(false);
+      console.log("Admin - Initial token:", token);
+      console.log("Admin - Refresh token:", refreshToken);
+
+      if (!token) {
+        console.log("Admin - No token, redirecting to login");
+        window.location.replace("/login");
+        return;
+      }
+
+      try {
+        let response = await fetch(
+          "https://api.creeksideinverness.org/api/validate-jwt",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ token }),
+          }
+        );
+
+        console.log("Admin - Validate JWT status:", response.status);
+
+        if (response.status === 401) {
+          console.log("Admin - Token expired, attempting refresh");
+          const newToken = await refreshTokenFn(refreshToken);
+          if (newToken) {
+            console.log("Admin - New token:", newToken);
+            sessionStorage.setItem("token", newToken);
+            token = newToken;
+            response = await fetch(
+              "https://api.creeksideinverness.org/api/validate-jwt",
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${newToken}`,
+                },
+                body: JSON.stringify({ token }),
+              }
+            );
+          } else {
+            console.log("Admin - Refresh failed");
+            sessionStorage.clear();
+            throw new Error("Token refresh failed");
+          }
+        }
+
+        if (!response.ok) {
+          console.log("Admin - Validation failed, status:", response.status);
+          sessionStorage.clear();
+          window.location.replace("/login");
+          return;
+        }
+
+        const data: validateJwtResponse = await response.json();
+        console.log("Admin - Validation response:", data);
+        if (!data.isValid) {
+          console.log("Admin - Token invalid, redirecting to login");
+          sessionStorage.clear();
+          window.location.replace("/login");
+          return;
+        }
+
+        console.log("Admin - Token validated successfully");
+        setIsCheckingAuth(false);
+      } catch (error) {
+        console.error("Admin - Validation error:", error);
+        sessionStorage.clear();
+        window.location.replace("/login");
+      }
+    };
+
+    validateToken();
   }, []);
 
   const {
@@ -269,9 +376,12 @@ export default function AdminPage() {
   } = useQuery({
     queryKey: ["content"],
     queryFn: async (): Promise<HomePageContent> => {
-      const response = await fetch("http://localhost:8080/api/content", {
-        cache: "no-store",
-      });
+      const response = await fetch(
+        "https://api.creeksideinverness.org/api/content",
+        {
+          cache: "no-store",
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch content");
       }
@@ -481,7 +591,8 @@ export default function AdminPage() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const token = sessionStorage.getItem("token");
+    let token = sessionStorage.getItem("token");
+    const refreshToken = sessionStorage.getItem("refreshToken");
 
     if (!token) {
       setError("You are not Authenticated");
@@ -490,14 +601,39 @@ export default function AdminPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/update-content", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ hero: heroData, content: contentData }),
-      });
+      let response = await fetch(
+        "https://api.creeksideinverness.org/api/update-content",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ hero: heroData, content: contentData }),
+        }
+      );
+
+      if (response.status === 401) {
+        const newToken = await refreshTokenFn(refreshToken);
+        if (newToken) {
+          sessionStorage.setItem("token", newToken);
+          token = newToken;
+
+          response = await fetch(
+            "https://api.creeksideinverness.org/api/update-content",
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${newToken}`,
+              },
+              body: JSON.stringify({ hero: heroData, content: contentData }),
+            }
+          );
+        } else {
+          throw new Error("Token refresh failed");
+        }
+      }
 
       if (response.ok) {
         setSuccessMsg("Content Updated Successfully!");
@@ -513,6 +649,29 @@ export default function AdminPage() {
     }
   };
 
+  async function handleLogout() {
+    const refreshToken = sessionStorage.getItem("refreshToken");
+    try {
+      const response = await fetch(
+        "https://api.creeksideinverness.org/api/logout",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ refreshToken }),
+        }
+      );
+      if (response.ok) {
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("refreshToken");
+        window.location.replace("/");
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  }
+
   if (isCheckingAuth) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -523,7 +682,6 @@ export default function AdminPage() {
       </div>
     );
   }
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -569,21 +727,17 @@ export default function AdminPage() {
     );
   }
 
+  unstable_noStore();
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="float-end">
         <button
           className="px-6 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-600"
-          onClick={() => {
-            sessionStorage.removeItem("token");
-            sessionStorage.removeItem("refreshToken");
-            window.location.reload();
-          }}
+          onClick={handleLogout}
         >
           Logout
         </button>
       </div>
-
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
           Admin Content Editor

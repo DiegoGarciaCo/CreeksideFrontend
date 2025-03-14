@@ -1,4 +1,6 @@
 "use client";
+import { unstable_noStore } from "next/cache";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 export default function Login() {
@@ -6,8 +8,9 @@ export default function Login() {
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
+    console.log("Login useEffect - Token:", token);
     if (token) {
-      window.location.replace("/admin");
+      // window.location.replace("/admin");
     }
   }, []);
 
@@ -15,11 +18,9 @@ export default function Login() {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
-    if (formData.get("username") === "" || formData.get("password") === "") {
+    if (!formData.get("username") || !formData.get("password")) {
       setError("Fields can't be empty");
-      setTimeout(() => {
-        setError("");
-      }, 5000);
+      setTimeout(() => setError(""), 5000);
       return;
     }
     const data = {
@@ -28,39 +29,45 @@ export default function Login() {
     };
 
     try {
-      const response = await fetch("http://localhost:8080/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        "https://api.creeksideinverness.org/api/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
       if (!response.ok) {
+        console.log("Login failed - Status:", response.status);
         setError("Could not login");
-        setTimeout(() => {
-          setError("");
-        }, 5000);
+        setTimeout(() => setError(""), 5000);
+        return; // Exit early on failure
       }
       const result = await response.json();
+      console.log("Login success - Response:", result);
       const { token, refreshToken } = result;
       sessionStorage.setItem("token", token);
       sessionStorage.setItem("refreshToken", refreshToken);
       window.location.replace("/admin");
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Login error:", error);
       setError("Could not login");
-      setTimeout(() => {
-        setError("");
-      }, 5000);
+      setTimeout(() => setError(""), 5000);
     }
   };
+  unstable_noStore();
   return (
     <>
       <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-gray-900">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
+          {/* logo here */}
+          <Image
             alt="Your Company"
-            src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
+            src="/path/to/your/logo.png"
+            width={32}
+            height={32}
             className="mx-auto h-10 w-auto"
           />
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">

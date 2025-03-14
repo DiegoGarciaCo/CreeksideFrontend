@@ -7,14 +7,18 @@ import Skeleton from "@/components/skeleton";
 import HeroTwo from "@/components/Hero2";
 import Content from "@/components/content";
 import Footer from "@/components/footer";
+import { unstable_noStore } from "next/cache";
 
 export default function HomePage() {
   const { data, isLoading } = useQuery<HomePageContent>({
     queryKey: ["content"],
     queryFn: async () => {
-      const response = await fetch("http://localhost:8080/api/content", {
-        cache: "no-store",
-      });
+      const response = await fetch(
+        "https://api.creeksideinverness.org/api/content",
+        {
+          cache: "no-store",
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch content");
       }
@@ -25,16 +29,19 @@ export default function HomePage() {
   const { data: images, isLoading: isImagesLoading } = useQuery<string[]>({
     queryKey: ["images"],
     queryFn: async () => {
-      const response = await fetch("http://localhost:8080/api/images", {
-        cache: "no-store",
-      });
+      const response = await fetch(
+        "https://api.creeksideinverness.org/api/images",
+        {
+          cache: "no-store",
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch images");
       }
       return response.json();
     },
   });
-
+  unstable_noStore();
   if (isLoading || isImagesLoading) {
     return (
       <div className="min-h-screen">
