@@ -22,7 +22,7 @@ export default function Carousel({ images }: EmblaCarouselProps) {
         <div className="embla__container flex">
           {images.map((image, index) => (
             <div className="embla__slide flex-shrink-0" key={index}>
-              <div className="relative w-full h-[400px]">
+              <div className="relative w-full h-[400px] md:h-[500px]">
                 <Image
                   src={image}
                   alt={`Slide ${index + 1}`}

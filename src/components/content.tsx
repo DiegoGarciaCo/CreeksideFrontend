@@ -44,7 +44,7 @@ export default function Content({ contentData, images }: PageContentProps) {
             <RichTextRenderer content={contentData.paragraph6} />
           </div>
         </div>
-        <div className="p-4 rounded-lg">
+        <div className="rounded-lg shadow-lg">
           <Carousel images={images} />
         </div>
         <div className="mt-16 max-w-2xl">

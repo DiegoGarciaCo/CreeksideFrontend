@@ -39,7 +39,7 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
-              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-hoa-text-dark"
+              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-white"
             >
               <span className="sr-only">Open main menu</span>
               <Bars3Icon aria-hidden="true" className="size-6" />
@@ -93,6 +93,12 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-hoa-text-dark hover:bg-hoa-secondary"
                   >
                     Master Association
+                  </Link>
+                  <Link
+                    href={heroData.button2}
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-hoa-text-dark hover:bg-hoa-secondary"
+                  >
+                    admin {"->"}
                   </Link>
                 </div>
               </div>
@@ -157,7 +163,7 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
                   aria-label="Learn more about Creekside Homeowners"
                 >
                   <Link href={heroData.button1}>
-                    Creekside Association <span aria-hidden="true">→</span>
+                    Creekside Association<span aria-hidden="true">→</span>
                   </Link>
                 </button>
                 <button
@@ -165,12 +171,12 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
                   aria-label="Learn more about Master Association"
                 >
                   <Link href={heroData.button2}>
-                    Master Association <span aria-hidden="true">→</span>
+                    Master Association<span aria-hidden="true">→</span>
                   </Link>
                 </button>
               </div>
             </div>
-            <div className="mx-auto mt-16 flex max-w-2xl sm:mt-24 lg:mt-0 lg:mr-0 lg:ml-10 lg:max-w-none lg:flex-none xl:ml-16">
+            <div className="mx-auto mt-16 hidden md:flex max-w-2xl sm:mt-24 lg:mt-0 lg:mr-0 lg:ml-10 lg:max-w-none lg:flex-none xl:ml-16">
               <div className="max-w-xl flex-none">
                 <Image
                   alt="Neighborhood landscape"
