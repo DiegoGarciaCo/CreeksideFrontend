@@ -59,18 +59,18 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
             <div className="mt-6 flow-root">
               <div className="-my-6 divide-y divide-hoa-text-light/10">
                 <div className="py-6">
-                  <Link
+                  <a
                     href={heroData.button1}
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-hoa-text-dark hover:bg-hoa-secondary"
                   >
                     Creekside Association
-                  </Link>
-                  <Link
+                  </a>
+                  <a
                     href={heroData.button2}
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-hoa-text-dark hover:bg-hoa-secondary"
                   >
                     Master Association
-                  </Link>
+                  </a>
                   <Link
                     href={heroData.button2}
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-hoa-text-dark hover:bg-hoa-secondary"
