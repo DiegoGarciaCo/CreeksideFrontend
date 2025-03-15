@@ -59,18 +59,22 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
             <div className="mt-6 flow-root">
               <div className="-my-6 divide-y divide-hoa-text-light/10">
                 <div className="py-6">
-                  <a
-                    href={heroData.button1}
+                  <button
+                    onClick={() => {
+                      window.open(heroData.button1, "_blank");
+                    }}
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-hoa-text-dark hover:bg-hoa-secondary"
                   >
                     Creekside Association
-                  </a>
-                  <a
-                    href={heroData.button2}
+                  </button>
+                  <button
+                    onClick={() => {
+                      window.open(heroData.button2, "_blank");
+                    }}
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-hoa-text-dark hover:bg-hoa-secondary"
                   >
                     Master Association
-                  </a>
+                  </button>
                   <Link
                     href={heroData.button2}
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-hoa-text-dark hover:bg-hoa-secondary"
@@ -126,41 +130,43 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
               className="aspect-1108/632 w-[69.25rem] bg-linear-to-r from-hoa-button-1 to-hoa-accent opacity-20"
             />
           </div>
-          <div className="mx-auto max-w-7xl px-6 pt-36 pb-24 sm:pb-32 lg:flex lg:px-8 lg:pt-40 lg:pb-40 h-full">
-            <div className="mx-auto max-w-2xl shrink-0 lg:mx-0 lg:pt-8 z-10">
-              <h1 className="mt-10 text-5xl font-semibold tracking-tight text-pretty text-white sm:text-7xl">
-                {heroData.heading1}
-              </h1>
-              <div className="mt-8 text-lg font-medium text-pretty text-hoa-secondary sm:text-xl/8">
-                <RichTextRenderer content={heroData.paragraph1} />
-              </div>
-              <div className="mt-10 flex items-center gap-x-6">
-                <button
-                  className="px-6 py-3 text-lg font-semibold bg-hoa-button-1 text-white rounded-lg shadow-lg hover:bg-hoa-button-1-hover transition"
-                  aria-label="Learn more about Creekside Homeowners"
-                >
-                  <Link href={heroData.button1}>
+          <div className="mx-auto max-w-7xl px-6 pt-36 pb-24 sm:pb-32 lg:flex lg:px-8 lg:pt-40 lg:pb-40">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:gap-x-8 min-h-0">
+              <div className="max-w-2xl flex-1 lg:pt-8">
+                <h1 className="mt-10 text-5xl font-semibold tracking-tight text-pretty text-white sm:text-7xl">
+                  {heroData.heading1}
+                </h1>
+                <div className="mt-8 text-lg font-medium text-pretty text-hoa-secondary sm:text-xl/8">
+                  <RichTextRenderer content={heroData.paragraph1} />
+                </div>
+                <div className="mt-10 flex items-center gap-x-6">
+                  <button
+                    className="px-6 py-3 text-lg font-semibold bg-hoa-button-1 text-white rounded-lg shadow-lg hover:bg-hoa-button-1-hover transition"
+                    onClick={() => {
+                      window.open(heroData.button1, "_blank");
+                    }}
+                    aria-label="Learn more about Creekside Homeowners"
+                  >
                     Creekside Association<span aria-hidden="true">→</span>
-                  </Link>
-                </button>
-                <button
-                  className="px-6 py-3 text-lg font-semibold bg-hoa-button-2 text-hoa-primary border-2 border-hoa-primary rounded-lg shadow-lg hover:bg-hoa-button-2-hover hover:text-hoa-text-dark transition"
-                  aria-label="Learn more about Master Association"
-                >
-                  <Link href={heroData.button2}>
+                  </button>
+                  <button
+                    className="px-6 py-3 text-lg font-semibold bg-hoa-button-2 text-hoa-primary border-2 border-hoa-primary rounded-lg shadow-lg hover:bg-hoa-button-2-hover hover:text-hoa-text-dark transition"
+                    onClick={() => {
+                      window.open(heroData.button2, "_blank");
+                    }}
+                    aria-label="Learn more about Master Association"
+                  >
                     Master Association<span aria-hidden="true">→</span>
-                  </Link>
-                </button>
+                  </button>
+                </div>
               </div>
-            </div>
-            <div className="mx-auto mt-16 hidden md:flex max-w-2xl sm:mt-24 lg:mt-0 lg:mr-0 lg:ml-10 lg:max-w-none lg:flex-none xl:ml-16">
-              <div className="max-w-xl flex-none">
+              <div className="mt-6 lg:mt-4 flex-shrink-0 hidden md:block">
                 <Image
                   alt="Neighborhood landscape"
-                  src="/image3.webp"
-                  width={640}
-                  height={360}
-                  className="min-h-[32rem] rounded-md bg-hoa-primary/5 shadow-2xl ring-1 ring-hoa-text-dark/10"
+                  src="/creekside.png"
+                  width={540}
+                  height={304}
+                  className="rounded-md bg-hoa-primary/5 shadow-2xl ring-1 ring-hoa-text-dark/10 w-full max-w-[540px] max-h-[504px]"
                 />
               </div>
             </div>
