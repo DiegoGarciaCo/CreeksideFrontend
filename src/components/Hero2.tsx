@@ -76,7 +76,7 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
                     Master Association
                   </button>
                   <Link
-                    href={heroData.button2}
+                    href="/admin"
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-hoa-text-dark hover:bg-hoa-secondary"
                   >
                     admin {"->"}
