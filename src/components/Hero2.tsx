@@ -7,6 +7,7 @@ import { HeroData } from "@/app/admin/page";
 import Link from "next/link";
 import Image from "next/image";
 import RichTextRenderer from "./richTextRenderer";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 interface HeroTwoProps {
   heroData: HeroData;
@@ -16,7 +17,7 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="bg-hoa-primary h-screen overflow-hidden">
+    <div className="bg-hoa-primary h-screen overflow-hidden relative">
       <header className="absolute inset-x-0 top-0 z-50">
         <nav
           aria-label="Global"
@@ -170,6 +171,18 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
                 />
               </div>
             </div>
+          </div>
+          {/* Animated Scroll Down Arrow */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <button
+              onClick={() =>
+                window.scrollTo({ top: window.innerHeight, behavior: "smooth" })
+              }
+              className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+              aria-label="Scroll down"
+            >
+              <ChevronDownIcon className="size-8 text-white" />
+            </button>
           </div>
         </div>
       </main>
