@@ -7,11 +7,13 @@ interface FooterData {
   footerParagraph2: string;
 }
 
-interface FooterProps {
-  footerData: FooterData;
-}
+export default async function FooterServer({
+  footerDataPromise,
+}: {
+  footerDataPromise: Promise<FooterData>;
+}) {
+  const footerData = await footerDataPromise;
 
-export default function Footer({ footerData }: FooterProps) {
   return (
     <footer className="bg-hoa-primary">
       <div className="mx-auto max-w-7xl overflow-hidden px-6 py-20 sm:py-24 lg:px-8">

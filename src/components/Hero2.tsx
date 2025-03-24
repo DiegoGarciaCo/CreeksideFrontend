@@ -1,20 +1,15 @@
-"use client";
-
-import React, { useState } from "react";
-import { Dialog, DialogPanel } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { HeroData } from "@/app/admin/page";
-import Link from "next/link";
+import { Suspense } from "react";
 import Image from "next/image";
+import { HeroData } from "@/app/admin/page";
+import HeroTwoClient from "./HeroTwoClient";
 import RichTextRenderer from "./richTextRenderer";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
-interface HeroTwoProps {
-  heroData: HeroData;
-}
-
-export default function HeroTwo({ heroData }: HeroTwoProps) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+export default async function HeroTwo({
+  heroDataPromise,
+}: {
+  heroDataPromise: Promise<HeroData>;
+}) {
+  const heroData = await heroDataPromise;
 
   return (
     <div className="bg-hoa-primary h-screen overflow-hidden relative">
@@ -24,69 +19,7 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
           className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
         >
           <div className="flex lg:flex-1"></div>
-          <div className="flex lg:hidden">
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(true)}
-              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-white"
-            >
-              <span className="sr-only">Open main menu</span>
-              <Bars3Icon aria-hidden="true" className="size-6" />
-            </button>
-          </div>
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <Link href="/admin" className="text-sm/6 font-semibold text-white">
-              Admin <span aria-hidden="true">→</span>
-            </Link>
-          </div>
         </nav>
-        <Dialog
-          open={mobileMenuOpen}
-          onClose={setMobileMenuOpen}
-          className="lg:hidden"
-        >
-          <div className="fixed inset-0 z-50" />
-          <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-hoa-text-light/10">
-            <div className="flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen(false)}
-                className="-m-2.5 rounded-md p-2.5 text-hoa-text-dark"
-              >
-                <span className="sr-only">Close menu</span>
-                <XMarkIcon aria-hidden="true" className="size-6" />
-              </button>
-            </div>
-            <div className="mt-6 flow-root">
-              <div className="-my-6 divide-y divide-hoa-text-light/10">
-                <div className="py-6">
-                  <button
-                    onClick={() => {
-                      window.open(heroData.button1, "_blank");
-                    }}
-                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-hoa-text-dark hover:bg-hoa-secondary"
-                  >
-                    Creekside Association
-                  </button>
-                  <button
-                    onClick={() => {
-                      window.open(heroData.button2, "_blank");
-                    }}
-                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-hoa-text-dark hover:bg-hoa-secondary"
-                  >
-                    Master Association
-                  </button>
-                  <Link
-                    href="/admin"
-                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-hoa-text-dark hover:bg-hoa-secondary"
-                  >
-                    admin {"->"}
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </DialogPanel>
-        </Dialog>
       </header>
       <main>
         <div className="relative isolate h-screen">
@@ -134,32 +67,15 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
           <div className="mx-auto max-w-7xl px-6 pt-36 pb-24 sm:pb-32 lg:flex lg:px-8 lg:pt-40 lg:pb-40">
             <div className="flex flex-col lg:flex-row lg:items-start lg:gap-x-8 min-h-0">
               <div className="max-w-2xl flex-1 lg:pt-8">
-                <h1 className="mt-10 text-5xl font-semibold tracking-tight text-pretty text-white sm:text-7xl">
-                  {heroData.heading1}
-                </h1>
-                <div className="mt-8 text-lg font-medium text-pretty text-hoa-secondary sm:text-xl/8">
-                  <RichTextRenderer content={heroData.paragraph1} />
-                </div>
-                <div className="mt-10 flex items-center gap-x-6">
-                  <button
-                    className="px-6 py-3 text-lg font-semibold bg-hoa-button-1 text-white rounded-lg shadow-lg hover:bg-hoa-button-1-hover transition"
-                    onClick={() => {
-                      window.open(heroData.button1, "_blank");
-                    }}
-                    aria-label="Learn more about Creekside Homeowners"
-                  >
-                    Creekside Association<span aria-hidden="true">→</span>
-                  </button>
-                  <button
-                    className="px-6 py-3 text-lg font-semibold bg-hoa-button-2 text-hoa-primary border-2 border-hoa-primary rounded-lg shadow-lg hover:bg-hoa-button-2-hover hover:text-hoa-text-dark transition"
-                    onClick={() => {
-                      window.open(heroData.button2, "_blank");
-                    }}
-                    aria-label="Learn more about Master Association"
-                  >
-                    Master Association<span aria-hidden="true">→</span>
-                  </button>
-                </div>
+                <Suspense fallback={<HeroContentSkeleton />}>
+                  <h1 className="mt-10 text-5xl font-semibold tracking-tight text-pretty text-white sm:text-7xl">
+                    {heroData.heading1}
+                  </h1>
+                  <div className="mt-8 text-lg font-medium text-pretty text-hoa-secondary sm:text-xl/8">
+                    <RichTextRenderer content={heroData.paragraph1} />
+                  </div>
+                </Suspense>
+                <HeroTwoClient heroData={heroData} />
               </div>
               <div className="mt-6 lg:mt-4 flex-shrink-0 hidden md:block">
                 <Image
@@ -168,24 +84,26 @@ export default function HeroTwo({ heroData }: HeroTwoProps) {
                   width={540}
                   height={304}
                   className="rounded-md bg-hoa-primary/5 shadow-2xl ring-1 ring-hoa-text-dark/10 w-full max-w-[540px] max-h-[504px]"
+                  priority
                 />
               </div>
             </div>
           </div>
-          {/* Animated Scroll Down Arrow */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <button
-              onClick={() =>
-                window.scrollTo({ top: window.innerHeight, behavior: "smooth" })
-              }
-              className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
-              aria-label="Scroll down"
-            >
-              <ChevronDownIcon className="size-8 text-white" />
-            </button>
-          </div>
         </div>
       </main>
     </div>
+  );
+}
+
+function HeroContentSkeleton() {
+  return (
+    <>
+      <div className="mt-10 h-12 w-4/5 bg-gray-300 animate-pulse mb-8" />
+      <div className="h-16 w-full bg-gray-300 animate-pulse mb-6" />
+      <div className="mt-10 flex items-center gap-x-6">
+        <div className="h-10 w-40 bg-gray-300 animate-pulse" />
+        <div className="h-10 w-40 bg-gray-300 animate-pulse" />
+      </div>
+    </>
   );
 }

@@ -1,16 +1,18 @@
-"use client";
-
-import React from "react";
-import Carousel from "./corousal";
+import { Suspense } from "react";
 import { ContentData } from "@/app/admin/page";
 import RichTextRenderer from "./richTextRenderer";
+import Carousel from "./corousal";
 
-interface PageContentProps {
-  contentData: ContentData;
-  images: string[];
-}
+export default async function ContentServer({
+  contentDataPromise,
+  imagesPromise,
+}: {
+  contentDataPromise: Promise<ContentData>;
+  imagesPromise: Promise<string[]>;
+}) {
+  const contentData = await contentDataPromise;
+  const images = await imagesPromise;
 
-export default function Content({ contentData, images }: PageContentProps) {
   return (
     <div className="bg-hoa-secondary px-6 py-32 lg:px-8">
       <div className="sticky top-10 right-0 w-1/2 max-w-xs border-2 border-hoa-accent p-6 bg-white shadow-lg rounded-2xl float-end transition-transform duration-300 hover:scale-105 hidden lg:block">
@@ -45,7 +47,13 @@ export default function Content({ contentData, images }: PageContentProps) {
           </div>
         </div>
         <div className="rounded-lg shadow-lg">
-          <Carousel images={images} />
+          <Suspense
+            fallback={
+              <div className="h-64 w-full bg-gray-300 animate-pulse rounded-lg" />
+            }
+          >
+            <Carousel images={images} />
+          </Suspense>
         </div>
         <div className="mt-16 max-w-2xl">
           <h2 className="text-3xl font-semibold tracking-tight text-pretty text-hoa-text-dark">
