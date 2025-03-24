@@ -49,7 +49,7 @@ export default async function ContentServer({
         <div className="rounded-lg shadow-lg">
           <Suspense
             fallback={
-              <div className="h-64 w-full bg-gray-300 animate-pulse rounded-lg" />
+              <div className="h-[400px] md:h-[500px] w-full bg-gray-300 animate-pulse rounded-lg" />
             }
           >
             <Carousel images={images} />

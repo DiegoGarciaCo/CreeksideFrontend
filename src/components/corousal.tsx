@@ -21,14 +21,18 @@ export default function Carousel({ images }: EmblaCarouselProps) {
       <div className="embla rounded-lg" ref={emblaRef}>
         <div className="embla__container flex">
           {images.map((image, index) => (
-            <div className="embla__slide flex-shrink-0" key={index}>
+            <div className="embla__slide flex-shrink-0 w-full" key={index}>
               <div className="relative w-full h-[400px] md:h-[500px]">
                 <Image
                   src={image}
                   alt={`Slide ${index + 1}`}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-lg"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="rounded-lg object-cover"
+                  placeholder="empty" // Remove blur placeholder if it’s causing issues
+                  // Remove blurDataURL since we're not using blur
+                  priority={index === 0} // Prioritize first image
+                  quality={85} // Increase quality (default is 75, max is 100)
                 />
               </div>
             </div>
